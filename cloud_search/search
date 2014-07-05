@@ -1,0 +1,27 @@
+#!/usr/bin/env coffee
+# vim:ft=coffee ts=2 sw=2 et :
+# -*- mode:coffee -*-
+dotenv = require 'dotenv'
+dotenv.load()
+
+request = require 'request'
+qs = require 'querystring'
+
+API_VERSION = '2013-01-01'
+endpoint = "http://#{process.env.SEACH_ENDPOINT}/#{API_VERSION}/search"
+params =
+  format: 'sdk'
+  q: 'aktsk'
+  "expr.distance": 'haversin(35.64664,139.701801,test_location.latitude,test_location.longitude)'
+  sort: 'distance asc'
+  pretty: true
+options =
+  url: "#{endpoint}?#{qs.stringify(params)}"
+  json: true
+
+request options, (err, response, data) ->
+  if (err)
+    console.log err, err.stack
+  else
+    data.hits.hit.forEach (x) ->
+      console.log x.fields
